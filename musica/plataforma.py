@@ -28,15 +28,15 @@ class Cancion:
         self.id = int(new_id)
 
     def reproducir(self) -> None:
-       # 初始化pygame
-       pygame.init()
-       pygame.mixer.init()
-       # 下载并播放音乐
-       pygame.mixer_music.load(self.archivo)
-       pygame.mixer_music.play()
+         # 初始化pygame并播放音乐
+         pygame.init()
+         pygame.mixer.init()
+         # 使用 pygame.mixer.music API
+         pygame.mixer.music.load(self.archivo)
+         pygame.mixer.music.play()
     
     def stop(self) -> None:
-        pygame.mixer_music.pause()
+        pygame.mixer.music.pause()
        
 
     def edit_cancion(self, titulo: str, artista: str, duracion: int, genero: str, archivo:str):
@@ -46,7 +46,7 @@ class Cancion:
        for i, j in zip(l3, l2):
            if j:
                 setattr(self, i, j)
-                if l3 != 'archivo':
+                if i != 'archivo':
                     self.changed[i] = j
                 else:
                     self.changed[i] = os.path.basename(j)
@@ -63,12 +63,14 @@ class Cancion:
     def mostrar_data_parte2(self):
         data = {}
         keys = ['titulo', 'artista', 'duracion', 'genero', 'archivo']
-        values = [self.titulo, self.artista, self.duracion, self.genero, self.archivo, self.id]
+        values = [self.titulo, self.artista, self.duracion, self.genero, self.archivo]
         for key, value in zip(keys, values):
             if key != 'archivo':
                 data[key] = value
             else:
                 data[key] = os.path.basename(value)
+        # include id explicitly
+        data['id'] = self.id
         return data
 
 
@@ -104,10 +106,10 @@ class ListaReproduccion:
 
 
 class PlataformaMusical:
-   def __init__(self, canciones=[], listas=[], cancion_ids=[]):
-       self.canciones = canciones
-       self.listas = listas
-       self.cancion_ids = cancion_ids
+   def __init__(self, canciones=None, listas=None, cancion_ids=None):
+       self.canciones = canciones if canciones is not None else []
+       self.listas = listas if listas is not None else []
+       self.cancion_ids = cancion_ids if cancion_ids is not None else []
 
    def registrar_cancion(self, titulo: str, artista: str, duracion: int, genero: str, archivo:str) -> bool:
         for cancion in self.canciones:

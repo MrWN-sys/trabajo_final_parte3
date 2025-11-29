@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 
 class Nodo:
-    def __init__(self, data, next, last=None):
+    def __init__(self, data, next=None, last=None):
         self.data = data
         self.next = next
         self.last = last
@@ -13,9 +13,7 @@ class Pila:
         self.size = 0
 
     def is_empty(self):
-        if self.current:
-            return False
-        return True
+        return self.current is None
     
     def enpilar(self, data):
         nodo = Nodo(data, self.current)
@@ -23,7 +21,7 @@ class Pila:
         self.size += 1
 
     def despilar(self):
-        if self.is_empty:
+        if self.is_empty():
             return None
         data = self.current.data
         self.current = self.current.next

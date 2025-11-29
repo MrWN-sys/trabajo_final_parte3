@@ -2,6 +2,7 @@ from musica.plataforma import *
 from app import mostrar_choices, pedir_int, menu_canciones, menu_listas, menu_reproduccion
 from TADs import ListaEnlazada
 import copy
+import os
 
 class OperateClient:
     def __init__(self, path):
