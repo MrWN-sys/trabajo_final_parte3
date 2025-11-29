@@ -12,7 +12,7 @@ class Cancion:
                 Cancion.usado.append(Cancion.id)
                 break
 
-    def __init__(self, titulo: str,  artista: str, duracion: int, genero: str, archivo_mp3: str):
+    def __init__(self, titulo=None,  artista=None, duracion=None, genero=None, archivo_mp3=None):
         self.get_id()
         self.id = Cancion.id
         self.titulo = titulo

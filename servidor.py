@@ -65,7 +65,7 @@ class Servidor:
         self.deal_json_info(path, 'w', data)
         with self.lock:
             self.pilas_dict[name].enpilar(path)
-            self.client_states[name.lower()] = 0
+            self.client_states[name] = 0
 
     def load_version(self, path: str, name) -> str:
         self.make_dir(path)
@@ -100,9 +100,10 @@ class Servidor:
         try:
             while True:
                 client, addr = self.service.accept()
-                name = client.recv(1024).decode()
-                if self.check_name_is_using(client, name.lower()):
-                    threading.Thread(target=self.deal_client, args=[name.lower(), client]).start()
+                name = client.recv(1024).decode().lower()
+                print(f'Connection from {addr} with name {name}.')
+                if self.check_name_is_using(client, name):
+                    threading.Thread(target=self.deal_client, args=[name, client]).start()
                 else:
                     client.close()
         except KeyboardInterrupt:

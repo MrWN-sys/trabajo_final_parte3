@@ -84,12 +84,18 @@ class OperateClient:
                 self.data['canciones']['modificar'][str(c.id)] = c.changed
 
     def deal_with_lista(self, l_old, l_total):
-        l_old, l_new = [i.nombre for i in l_old], [i.nombre for i in self.plata.listas]
-        for l in l_total:
-            if l.nombre in l_old and l.nombre not in l_new:
-                self.data['listas']['eliminar'].append(l.nombre)
-            elif (l.nombre not in l_old and l.nombre in l_new) or l.changed:
-                self.data['listas']['nuevo'][l.nombre] = l.canciones
+        # Robustly compute deleted, added and changed lists by comparing names
+        old_names = [i.nombre for i in l_old]
+        new_names = [i.nombre for i in self.plata.listas]
+        # deleted lists: in old but not in new
+        for name in old_names:
+            if name not in new_names:
+                if name not in self.data['listas']['eliminar']:
+                    self.data['listas']['eliminar'].append(name)
+        # added or changed lists: in new but not in old OR changed flag set
+        for lista in self.plata.listas:
+            if lista.nombre not in old_names or lista.changed:
+                self.data['listas']['nuevo'][lista.nombre] = lista.canciones
     
     def saving(self, path: str, c_old: list[Cancion], l_old: list[ListaReproduccion]):
         print('Saving information...')
@@ -115,7 +121,13 @@ class OperateServidor:
                 for i, j in value.items():
                     self.old_data['canciones'].pop(i, None)
                     with self.lock:
-                        os.remove(os.path.join(self.path, j['archivo']))
+                        try:
+                            os.remove(os.path.join(self.path, j['archivo']))
+                        except FileNotFoundError:
+                            # If file does not exist, ignore and continue
+                            pass
+                        except Exception as e:
+                            print(f'Error removing file {j["archivo"]}: {e}')
             else:
                 for i, j in value.items():
                     for a, b in j.items():

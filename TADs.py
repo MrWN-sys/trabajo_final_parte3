@@ -41,7 +41,7 @@ class ListaEnlazada:
     def enlazar(self, data):
         nodo = Nodo(data, None, self.current)
         temp = self.current.next if self.current else None
-        if temp:
+        while temp:
             siguiente = temp.next
             temp.last = temp.next = None
             temp = siguiente
