@@ -48,6 +48,7 @@ class OperateClient:
     def operation(self):
         cancion_ids = [c.id for c in self.ini_cancion]
         self.plata = PlataformaMusical(self.ini_cancion, self.ini_lista, cancion_ids)
+        self.lista_enlazar.enlazar(copy.deepcopy(self.plata))
         while True:
             choices = {1: 'Gestionar canciones', 2: 'Gestionar listas', 3: 'Reproducción',
                        4: 'Deshacer última acción', 5: 'Rehacer última acción deshecha', 0: 'Volver'}
@@ -83,7 +84,7 @@ class OperateClient:
             elif c.changed:
                 self.data['canciones']['modificar'][str(c.id)] = c.changed
 
-    def deal_with_lista(self, l_old, l_total):
+    def deal_with_lista(self, l_old):
         # Robustly compute deleted, added and changed lists by comparing names
         old_names = [i.nombre for i in l_old]
         new_names = [i.nombre for i in self.plata.listas]
@@ -102,7 +103,7 @@ class OperateClient:
         c_total = [i for i in c_old if i not in self.plata.canciones] + self.plata.canciones
         l_total = [i for i in l_old if i not in self.plata.listas] + self.plata.listas
         self.deal_with_cancion(c_total, path)
-        self.deal_with_lista(l_old, l_total)
+        self.deal_with_lista(l_old)
 
 
 class OperateServidor:
